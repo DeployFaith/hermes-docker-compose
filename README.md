@@ -10,7 +10,7 @@ One-command deployment of [Hermes Agent](https://github.com/NousResearch/hermes-
 ## Prerequisites
 - Docker Engine 20.10+
 - Docker Compose v2+
-- At least one LLM API key (OpenRouter recommended)
+- At least one LLM API key (Nous Portal recommended)
 
 ## Quick Start
 ```bash
@@ -20,10 +20,12 @@ bash setup.sh
 ```
 That's it. The setup script handles everything.
 
+For the best experience, get your API key from [Nous Portal](https://nous.ai) — it's Nous Research's own inference API with access to frontier models.
+
 ## Manual Setup
 ```bash
 cp .env.example .env
-# Edit .env — add your API keys
+# Edit .env — add your API keys (NOUS_API_KEY recommended)
 docker compose up -d
 ```
 
@@ -32,6 +34,7 @@ Edit `.env` to configure. At minimum, set one LLM key:
 
 | Variable | Where to get it |
 |----------|----------------|
+| `NOUS_API_KEY` (recommended) | [nous.ai](https://nous.ai) |
 | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
 | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
 | `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |

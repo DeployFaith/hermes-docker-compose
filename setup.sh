@@ -95,9 +95,9 @@ if [[ -n "$OPENAI_KEY" ]]; then
 fi
 
 # Google
-read -r -p "  Google AI API key (aistudio.google.com/apikey): " GOOGLE_KEY
-if [[ -n "$GOOGLE_KEY" ]]; then
-    sed -i "s|^GOOGLE_API_KEY=.*|GOOGLE_API_KEY=$GOOGLE_KEY|" .env
+read -r -p "  Google AI API key (opencode.ai): " OPENCODE_KEY
+if [[ -n "$OPENCODE_KEY" ]]; then
+    sed -i "s|^OPENCODE_GO_API_KEY=.*|OPENCODE_GO_API_KEY=$OPENCODE_KEY|" .env
     ok "Google AI key saved"
 fi
 
@@ -110,13 +110,13 @@ fi
 
 # Validate at least one key was provided
 HAS_KEY=false
-for var in NOUS_KEY OPENROUTER_KEY OPENAI_KEY GOOGLE_KEY OLLAMA_KEY; do
+for var in NOUS_KEY OPENROUTER_KEY OPENAI_KEY OPENCODE_KEY OLLAMA_KEY; do
     if [[ -n "${!var:-}" ]]; then HAS_KEY=true; break; fi
 done
 
 # Also check if keys already existed in .env from a prior run
 if ! $HAS_KEY; then
-    for line in NOUS_API_KEY OPENROUTER_API_KEY OPENAI_API_KEY GOOGLE_API_KEY OLLAMA_API_KEY; do
+    for line in NOUS_API_KEY OPENROUTER_API_KEY OPENAI_API_KEY OPENCODE_GO_API_KEY OLLAMA_API_KEY; do
         val=$(grep -oP "^${line}=\\K.*" .env 2>/dev/null || true)
         if [[ -n "$val" && "$val" != "***" ]]; then HAS_KEY=true; break; fi
     done

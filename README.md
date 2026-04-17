@@ -114,7 +114,6 @@ bash setup.sh
 |----------|----------|-----------|
 | Nous Portal (recommended) | `NOUS_API_KEY` | [portal.nousresearch.com](https://portal.nousresearch.com/) |
 | OpenRouter | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
-| OpenAI | `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com) |
 | OpenCode Go | `OPENCODE_GO_API_KEY` | [opencode.ai](https://opencode.ai) |
 
 ### Messaging (optional)

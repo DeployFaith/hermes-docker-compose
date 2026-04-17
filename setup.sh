@@ -88,9 +88,6 @@ if [[ -n "$OPENROUTER_KEY" ]]; then
 fi
 
 # OpenAI
-read -r -p "  OpenAI API key (platform.openai.com): " OPENAI_KEY
-if [[ -n "$OPENAI_KEY" ]]; then
-    sed -i "s|^OPENAI_API_KEY=.*|OPENAI_API_KEY=$OPENAI_KEY|" .env
     ok "OpenAI key saved"
 fi
 
@@ -110,13 +107,11 @@ fi
 
 # Validate at least one key was provided
 HAS_KEY=false
-for var in NOUS_KEY OPENROUTER_KEY OPENAI_KEY OPENCODE_KEY OLLAMA_KEY; do
     if [[ -n "${!var:-}" ]]; then HAS_KEY=true; break; fi
 done
 
 # Also check if keys already existed in .env from a prior run
 if ! $HAS_KEY; then
-    for line in NOUS_API_KEY OPENROUTER_API_KEY OPENAI_API_KEY OPENCODE_GO_API_KEY OLLAMA_API_KEY; do
         val=$(grep -oP "^${line}=\\K.*" .env 2>/dev/null || true)
         if [[ -n "$val" && "$val" != "***" ]]; then HAS_KEY=true; break; fi
     done

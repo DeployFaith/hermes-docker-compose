@@ -74,7 +74,7 @@ echo -e "\\n${BOLD}LLM Provider API Keys${RESET} (at least one required)"
 echo -e "Press ${YELLOW}Enter${RESET} to skip any prompt.\\n"
 
 # Nous Portal (recommended)
-read -r -p "  Nous Portal API key (recommended, nous.ai): " NOUS_KEY
+read -r -p "  Nous Portal API key (recommended, portal.nousresearch.com): " NOUS_KEY
 if [[ -n "$NOUS_KEY" ]]; then
     sed -i "s|^NOUS_API_KEY=.*|NOUS_API_KEY=$NOUS_KEY|" .env
     ok "Nous Portal key saved"

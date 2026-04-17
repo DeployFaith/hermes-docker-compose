@@ -112,7 +112,7 @@ bash setup.sh
 ### LLM Providers (pick one)
 | Provider | Variable | Get a key |
 |----------|----------|-----------|
-| Nous Portal (recommended) | `NOUS_API_KEY` | [nous.ai](https://nous.ai) |
+| Nous Portal (recommended) | `NOUS_API_KEY` | [portal.nousresearch.com](https://portal.nousresearch.com/) |
 | OpenRouter | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
 | Anthropic | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
 | Google Gemini | `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |

@@ -42,7 +42,7 @@ services:
   dashboard:
     image: nousresearch/hermes-agent:latest
     container_name: hermes-dashboard
-    command: dashboard --host 0.0.0.0
+    command: dashboard --host 0.0.0.0 --insecure
     restart: unless-stopped
     depends_on:
       - gateway

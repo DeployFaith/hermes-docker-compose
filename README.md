@@ -1,103 +1,154 @@
 # Hermes Agent Docker Compose
 
-One-command deployment of [Hermes Agent](https://github.com/NousResearch/hermes-agent) — the self-improving AI agent by Nous Research.
-
-## What You Get
-- **Gateway** — persistent agent runtime with Telegram, Discord, Slack, WhatsApp support
-- **Dashboard** — web UI for managing the agent
-- **Auto-updates** — optional Watchtower integration
-
-## Prerequisites
-- Docker Engine 20.10+
-- Docker Compose v2+
-- At least one LLM API key (Nous Portal recommended)
+Run [Hermes Agent](https://github.com/NousResearch/hermes-agent) in Docker in under 2 minutes.
 
 ## Quick Start
+
+### 1. Create a directory and .env file
 ```bash
-git clone <repo-url> hermes-docker
-cd hermes-docker
-bash setup.sh
+mkdir hermes && cd hermes
 ```
-That's it. The setup script handles everything.
 
-For the best experience, get your API key from [Nous Portal](https://nous.ai) — it's Nous Research's own inference API with access to frontier models.
+### 2. Create docker-compose.yaml
+```yaml
+# =============================================================================
+# Hermes Agent Docker Compose Stack
+# =============================================================================
+# Usage:
+#   docker compose -f /opt/hermes-docker/docker-compose.yaml up -d
+#
+# Environment:
+#   Place a .env file in /opt/hermes-docker/ (or pass one via env_file)
+#   Variables:
+#     HERMES_DATA_DIR   - Host path for hermes data (default: ~/.hermes)
+#     GATEWAY_PORT      - Host port for the gateway API (default: 8642)
+#     DASHBOARD_PORT    - Host port for the dashboard UI (default: 9119)
+# =============================================================================
 
-## Manual Setup
+
+services:
+  # ---------------------------------------------------------------------------
+  # Hermes Gateway — core agent runtime & API
+  # ---------------------------------------------------------------------------
+  gateway:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-gateway
+    command: gateway run
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_PORT:-8642}:8642"
+    volumes:
+      - ${HERMES_DATA_DIR:-~/.hermes}:/opt/data
+    shm_size: 1g
+    networks:
+      - hermes-net
+    healthcheck:
+      test: ["CMD-SHELL", "ss -tln | grep -q 8642 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # Hermes Dashboard — web UI for managing the agent
+  # ---------------------------------------------------------------------------
+  dashboard:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-dashboard
+    command: dashboard --host 0.0.0.0 --insecure
+    restart: unless-stopped
+    depends_on:
+      - gateway
+    ports:
+      - "${DASHBOARD_PORT:-9119}:9119"
+    environment:
+      GATEWAY_HEALTH_URL: http://hermes-gateway:8642
+    networks:
+      - hermes-net
+
+  # ---------------------------------------------------------------------------
+  # Watchtower (opt-in) — auto-update hermes containers
+  # ---------------------------------------------------------------------------
+  # Uncomment the block below to enable automatic image updates via Watchtower.
+  # It will watch every container on this compose project and pull new images
+  # when available, then restart them seamlessly.
+  #
+  # watchtower:
+  #   image: containrrr/watchtower:latest
+  #   container_name: hermes-watchtower
+  #   restart: unless-stopped
+  #   command: --label-enable --cleanup
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - hermes-net
+
+networks:
+  hermes-net:
+    driver: bridge
+```
+
+### 3. Create .env with your API key
 ```bash
-cp .env.example .env
-# Edit .env — add your API keys (NOUS_API_KEY recommended)
+echo "NOUS_API_KEY=your-key-here" > .env
+```
+
+### 4. Run it
+```bash
 docker compose up -d
+```
+
+Done. Gateway at `http://localhost:8642`, Dashboard at `http://localhost:9119`.
+
+## Setup Script (alternative)
+```bash
+git clone https://github.com/DeployFaith/hermes-docker-compose.git
+cd hermes-docker-compose
+bash setup.sh
 ```
 
 ## Configuration
-Edit `.env` to configure. At minimum, set one LLM key:
 
-| Variable | Where to get it |
-|----------|----------------|
-| `NOUS_API_KEY` (recommended) | [nous.ai](https://nous.ai) |
-| `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
-| `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
-| `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |
+### LLM Providers (pick one)
+| Provider | Variable | Get a key |
+|----------|----------|-----------|
+| Nous Portal (recommended) | `NOUS_API_KEY` | [nous.ai](https://nous.ai) |
+| OpenRouter | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
+| Anthropic | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
+| Google Gemini | `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |
 
-Optional messaging platforms: Telegram, Discord, Slack (see `.env.example`).
+### Messaging (optional)
+Set these in `.env` to connect a platform:
+
+**Telegram:**
+```
+TELEGRAM_BOT_TOKEN=your-token
+TELEGRAM_ALLOWED_USERS=your-user-id
+```
+
+**Discord:**
+```
+DISCORD_BOT_TOKEN=your-token
+```
+
+See `.env.example` for all options.
 
 ## Usage
-
-### Gateway (background service)
 ```bash
-docker compose up -d
-```
-Gateway API: http://localhost:8642
-Dashboard: http://localhost:9119
-
-### Interactive CLI
-```bash
-docker compose run --rm gateway hermes
+docker compose up -d                        # start
+docker compose logs -f gateway              # logs
+docker compose run --rm gateway hermes      # interactive CLI
+docker compose down                         # stop
+docker compose pull && docker compose up -d # upgrade
 ```
 
-### View logs
-```bash
-docker compose logs -f gateway
-```
-
-### Stop
-```bash
-docker compose down
-```
-
-### Upgrade
-```bash
-docker compose pull
-docker compose up -d
-```
-
-### Enable auto-updates (Watchtower)
-Uncomment the `watchtower` service in `docker-compose.yaml`, then:
-```bash
-docker compose up -d
-```
-
-## Data Persistence
-All agent data lives in the directory specified by `HERMES_DATA_DIR` (default: `~/.hermes`).
-This includes conversations, memory, skills, and configuration. Back up this directory to preserve your agent's state.
-
-## Troubleshooting
-
-**Container exits immediately:** Check `docker compose logs gateway`. Usually a missing API key or port conflict.
-
-**Permission denied:** `chmod -R 755 ~/.hermes`
-
-**Browser tools fail:** Playwright needs shared memory. Already configured with `shm_size: 1g`.
-
-**arm64 / Apple Silicon:** The published image is amd64 only. Build locally:
-```bash
-docker compose build
-```
+## Data
+Everything persists in the mounted directory (default: `~/.hermes`). Back it up.
 
 ## Resources
-- [Hermes Documentation](https://hermes-agent.nousresearch.com)
-- [GitHub](https://github.com/NousResearch/hermes-agent)
-- [Discord](https://discord.gg/NousResearch)
+- Docs: [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
+- GitHub: [github.com/NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)
+- Discord: [discord.gg/NousResearch](https://discord.gg/NousResearch)
 
 ## License
 MIT

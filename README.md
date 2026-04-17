@@ -38,7 +38,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - "9119:9119"
+      - "9120:9119"
     environment:
       GATEWAY_HEALTH_URL: http://hermes-gateway:8642
 

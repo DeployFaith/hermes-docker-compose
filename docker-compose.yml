@@ -9,7 +9,7 @@
 #   Variables:
 #     HERMES_DATA_DIR   - Host path for hermes data (default: ~/.hermes)
 #     GATEWAY_PORT      - Host port for the gateway API (default: 8642)
-#     DASHBOARD_PORT    - Host port for the dashboard UI (default: 9119)
+#     DASHBOARD_PORT    - Host port for the dashboard UI (default: 9120)
 # =============================================================================
 
 
@@ -47,7 +47,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - "${DASHBOARD_PORT:-9119}:9119"
+      - "${DASHBOARD_PORT:-9120}:9119"
     environment:
       GATEWAY_HEALTH_URL: http://hermes-gateway:8642
     networks:

@@ -114,7 +114,7 @@ bash setup.sh
 |----------|----------|-----------|
 | Nous Portal (recommended) | `NOUS_API_KEY` | [portal.nousresearch.com](https://portal.nousresearch.com/) |
 | OpenRouter | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
-| Anthropic | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
+| OpenAI | `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com) |
 | Google Gemini | `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |
 
 ### Messaging (optional)

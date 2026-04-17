@@ -87,11 +87,11 @@ if [[ -n "$OPENROUTER_KEY" ]]; then
     ok "OpenRouter key saved"
 fi
 
-# Anthropic
-read -r -p "  Anthropic API key (console.anthropic.com): " ANTHROPIC_KEY
+# OpenAI
+read -r -p "  OpenAI API key (platform.openai.com): " ANTHROPIC_KEY
 if [[ -n "$ANTHROPIC_KEY" ]]; then
-    sed -i "s|^ANTHROPIC_API_KEY=.*|ANTHROPIC_API_KEY=$ANTHROPIC_KEY|" .env
-    ok "Anthropic key saved"
+    sed -i "s|^OPENAI_API_KEY=.*|OPENAI_API_KEY=$ANTHROPIC_KEY|" .env
+    ok "OpenAI key saved"
 fi
 
 # Google
@@ -116,7 +116,7 @@ done
 
 # Also check if keys already existed in .env from a prior run
 if ! $HAS_KEY; then
-    for line in NOUS_API_KEY OPENROUTER_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY OLLAMA_API_KEY; do
+    for line in NOUS_API_KEY OPENROUTER_API_KEY OPENAI_API_KEY GOOGLE_API_KEY OLLAMA_API_KEY; do
         val=$(grep -oP "^${line}=\\K.*" .env 2>/dev/null || true)
         if [[ -n "$val" && "$val" != "***" ]]; then HAS_KEY=true; break; fi
     done

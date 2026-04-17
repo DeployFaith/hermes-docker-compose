@@ -27,7 +27,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.hermes:/opt/data
+      - ${HOME:-/root}/.hermes:/opt/data
     shm_size: 1g
 
   dashboard:

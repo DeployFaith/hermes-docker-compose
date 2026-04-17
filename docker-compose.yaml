@@ -25,7 +25,7 @@ services:
     ports:
       - "${GATEWAY_PORT:-8642}:8642"
     volumes:
-      - ${HERMES_DATA_DIR:-~/.hermes}:/opt/data
+      - ${HERMES_DATA_DIR:-${HOME:-/root}/.hermes}:/opt/data
     shm_size: 1g
     networks:
       - hermes-net

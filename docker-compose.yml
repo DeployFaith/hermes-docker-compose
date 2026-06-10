@@ -1,17 +1,16 @@
 # =============================================================================
 # Hermes Agent Docker Compose Stack
 # =============================================================================
-# Usage:
-#   docker compose -f /opt/hermes-docker/docker-compose.yaml up -d
 #
-# Environment:
-#   Place a .env file in /opt/hermes-docker/ (or pass one via env_file)
-#   Variables:
-#     HERMES_DATA_DIR   - Host path for hermes data (default: ~/.hermes)
-#     GATEWAY_PORT      - Host port for the gateway API (default: 8642)
-#     DASHBOARD_PORT    - Host port for the dashboard UI (default: 9120)
+# Quick start:
+#   docker compose up -d
+#   docker compose exec gateway hermes setup
+#
+# Environment (.env file in same directory):
+#   HERMES_DATA_DIR   - Host path for hermes data (default: ~/.hermes)
+#   GATEWAY_PORT      - Host port for the gateway API (default: 8642)
+#   DASHBOARD_PORT    - Host port for the dashboard UI (default: 9120)
 # =============================================================================
-
 
 services:
   # ---------------------------------------------------------------------------
@@ -30,7 +29,7 @@ services:
     networks:
       - hermes-net
     healthcheck:
-      test: ["CMD-SHELL", "ss -tln | grep -q 8642 || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:8642/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

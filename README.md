@@ -5,52 +5,14 @@ Run [Hermes Agent](https://github.com/NousResearch/hermes-agent) in Docker. Setu
 ## Quick Start
 
 ```bash
-mkdir hermes && cd hermes
-
-# Create docker-compose.yaml (copy the block below)
+git clone https://github.com/DeployFaith/hermes-docker-compose.git
+cd hermes-docker-compose
 
 docker compose up -d
 docker compose exec gateway hermes setup
 ```
 
 The setup wizard configures your LLM provider, messaging platforms, tools, and personality.
-
-## docker-compose.yaml
-
-```yaml
-services:
-  gateway:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes-gateway
-    command: gateway run
-    restart: unless-stopped
-    ports:
-      - "8642:8642"
-    volumes:
-      - ${HOME:-/root}/.hermes:/opt/data
-    shm_size: 1g
-
-  dashboard:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes-dashboard
-    command: dashboard --host 0.0.0.0 --insecure
-    restart: unless-stopped
-    depends_on:
-      - gateway
-    ports:
-      - "9120:9119"
-    environment:
-      GATEWAY_HEALTH_URL: http://hermes-gateway:8642
-
-  # Uncomment for auto-updates:
-  # watchtower:
-  #   image: containrrr/watchtower:latest
-  #   container_name: hermes-watchtower
-  #   restart: unless-stopped
-  #   command: --label-enable --cleanup
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-```
 
 ## Usage
 
@@ -63,9 +25,27 @@ docker compose down                         # stop
 docker compose pull && docker compose up -d # upgrade
 ```
 
+## Configuration
+
+Copy `.env.example` to `.env` and edit as needed:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Default | Description |
+|---|---|---|
+| `HERMES_DATA_DIR` | `~/.hermes` | Host path for persistent data |
+| `GATEWAY_PORT` | `8642` | Host port for the gateway API |
+| `DASHBOARD_PORT` | `9120` | Host port for the dashboard UI |
+
 ## Data
 
 Everything persists in `~/.hermes` on your host. Back it up.
+
+## Auto-Updates
+
+Uncomment the `watchtower` block in `docker-compose.yml` to enable automatic image updates.
 
 ## Resources
 
